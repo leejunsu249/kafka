@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kafka-consumer-scaledobject
+spec:
+  scaleTargetRef:
+    name: kafka-consumer  # 오토스케일링할 Deployment 이름
+  pollingInterval: 30     # 30초마다 Kafka lag 체크
+  cooldownPeriod: 300     # 스케일 다운 전 300초 대기
+  minReplicaCount: 2      # 최소 2개의 Pod 유지
+  maxReplicaCount: 10     # 최대 10개의 Pod로 확장
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: "kraft-cluster-kafka-bootstrap.kafka:9092"  # Kafka bootstrap 서비스 주소
+        topic: "my-topic"              # 모니터링할 토픽 이름
+        consumerGroup: "consumer-group"  # 해당 Consumer Group ID (consumer.py 코드와 일치)
+        lagThreshold: "5"             # 총 lag가 10을 넘으면 스케일 아웃 시작

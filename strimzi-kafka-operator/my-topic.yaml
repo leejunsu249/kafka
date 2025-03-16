@@ -1,0 +1,18 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: my-topic
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kraft-cluster
+spec:
+  # Kafka 토픽 파티션 개수입니다
+  partitions: 10
+  # 해당 토픽의 레플리케이션 팩터(복제본 개수)입니다.
+  replicas: 2
+  config:
+    cleanup.policy: "delete"
+    retention.ms: "604800000"       # 7일
+    segment.bytes: "1073741824"     # 1GB
+    compression.type: "producer"
+    min.insync.replicas: "2"       # RF=3 이상인 경우 

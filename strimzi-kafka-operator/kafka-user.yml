@@ -1,0 +1,11 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: jslee
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kraft-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+

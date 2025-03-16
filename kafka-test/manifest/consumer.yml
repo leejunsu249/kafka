@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-consumer
+  labels:
+    app: kafka-consumer
+spec:
+  selector:
+    matchLabels:
+      app: kafka-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer
+    spec:
+      restartPolicy: Always 
+      containers:
+        - name: kafka-consumer
+          image: wnstn385/kafka-consumer:latest
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kraft-cluster-kafka-bootstrap.kafka:9092"  
+            - name: KAFKA_TOPIC
+              value: "my-topic"
+            - name: MYSQL_HOST
+              value: "mysql"      
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              value: "password"
+            - name: MYSQL_DATABASE
+              value: "testdb"
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-consumer-service
+spec:
+  selector:
+    app: kafka-consumer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

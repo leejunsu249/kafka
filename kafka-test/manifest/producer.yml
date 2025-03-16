@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-producer
+  labels:
+    app: fastapi-producer
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: fastapi-producer
+  template:
+    metadata:
+      labels:
+        app: fastapi-producer
+    spec:
+      restartPolicy: Always     
+      containers:
+        - name: fastapi-producer
+          image: wnstn385/fastapi-producer:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kraft-cluster-kafka-bootstrap.kafka:9092"  # Kafka 서비스 이름/주소에 맞게 수정
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-producer
+spec:
+  selector:
+    app: fastapi-producer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort
